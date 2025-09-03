@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Journal</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRGFpbHkgSm91cm5hbCIsInNob3J0X25hbWUiOiJKb3VybmFsIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiM2MzY2ZjEiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRreUlpQm9aV2xuYUhROUlqRTVNaUlnZG1sbGQwSnZlRDBpTUNBd0lERTVNaUF4T1RJaUlHWnBiR3c5SWlNMk16WTJaakVpUGp4eVpXTjBJSGc5SWpRNElpQjVQU0kwT0NJZ2QybGtkR2c5SWprek5pSWdhR1ZwWjJoMFBTSXpOaUlnY25nOUlqRWlMejQ4ZEdWNGRDQjRQU0k1TmlJZ2VUMGlPVFlpSUhSbGVIUXRZVzVqYUc5eVBTSnRhV1JrYkdVaUlHWnBiR3c5SWlObVptWWlJR1p2Ym5RdGMybDZaVDBpTWpnaUlHWnZiblF0Wm1GdGFXeDVQU0p6WVc1ekxYTmxjbWxtSWo0OEwzUmxlSFErUEM5emRtYysiLCJzaXplcyI6IjE5MngxOTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <style>
+        :root {
+            --accent-color: #6366f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .entry-form {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .date-display {
+            font-size: 1.2em;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .color-selector {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-selector label {
+            font-weight: 600;
+            color: #555;
+            flex-shrink: 0;
+        }
+
+        .color-input {
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            width: 100px;
+            transition: border-color 0.3s ease;
+        }
+
+        .color-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            border: 2px solid #e5e7eb;
+            background-color: var(--accent-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .goals-section {
+            margin-bottom: 20px;
+        }
+
+        .goals-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .goals-text {
+            width: 100%;
+            min-height: 80px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .goals-text:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .mood-selector {
+            margin-bottom: 20px;
+        }
+
+        .mood-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .mood-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mood-btn {
+            background: #f3f4f6;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            font-family: inherit;
+        }
+
+        .mood-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .mood-btn.selected {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .entry-text {
+            width: 100%;
+            min-height: 150px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .entry-text:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .reflection-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .entries-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .entries-header {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #374151;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 10px;
+        }
+
+        .entry-item {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #6366f1;
+            transition: transform 0.2s ease;
+        }
+
+        .entry-item:hover {
+            transform: translateX(5px);
+        }
+
+        .entry-date {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .entry-mood {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .entry-goals {
+            background: #f0f9ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 3px solid #0ea5e9;
+        }
+
+        .entry-goals-label {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #0ea5e9;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .entry-reflection {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .entry-reflection-label {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .no-entries {
+            text-align: center;
+            color: #9ca3af;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            float: right;
+            margin-top: -5px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .mood-options {
+                justify-content: center;
+            }
+
+            .color-selector {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Daily Journal</h1>
+        </div>
+
+        <div class="entry-form">
+            <div class="date-display" id="currentDate"></div>
+            
+            <div class="color-selector">
+                <label>Today's accent color:</label>
+                <input type="text" class="color-input" id="colorInput" placeholder="#6366f1" maxlength="7">
+                <div class="color-preview" id="colorPreview"></div>
+            </div>
+
+            <div class="goals-section">
+                <label>Goals and ideas for today:</label>
+                <textarea 
+                    class="goals-text" 
+                    id="goalsEntry" 
+                    placeholder="What do you want to accomplish today? Any ideas or thoughts for the day ahead?"
+                ></textarea>
+            </div>
+            
+            <div class="mood-selector">
+                <label>How are you feeling today?</label>
+                <div class="mood-options">
+                    <button class="mood-btn" data-mood=":)">:) Chill</button>
+                    <button class="mood-btn" data-mood=":D">:D Fun</button>
+                    <button class="mood-btn" data-mood=":P">:P Productive</button>
+                    <button class="mood-btn" data-mood=">:(">:( Crashout</button>
+                    <button class="mood-btn" data-mood="8)">8) Music</button>
+                </div>
+            </div>
+
+            <div class="reflection-section">
+                <label>What happened today and how do you feel about it?</label>
+                <textarea 
+                    class="entry-text" 
+                    id="journalEntry" 
+                    placeholder="Reflect on your day... What happened? How did it make you feel? What did you learn?"
+                ></textarea>
+            </div>
+
+            <button class="save-btn" onclick="saveEntry()">Save Entry</button>
+        </div>
+
+        <div class="entries-section">
+            <h2 class="entries-header">Previous Entries</h2>
+            <div id="entriesList"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMood = '';
+        let entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+
+        // Toggle browse section
+        function toggleBrowse() {
+            const content = document.getElementById('browseContent');
+            const icon = document.getElementById('toggleIcon');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.classList.remove('open');
+            } else {
+                content.classList.add('open');
+                icon.classList.add('open');
+                populateMonthlyBrowse();
+            }
+        }
+
+        // Populate monthly browse section
+        function populateMonthlyBrowse() {
+            const monthlyBrowse = document.getElementById('monthlyBrowse');
+            
+            if (entries.length === 0) {
+                monthlyBrowse.innerHTML = '<div class="no-entries">No entries yet!</div>';
+                return;
+            }
+
+            // Group entries by month/year
+            const groupedEntries = {};
+            entries.forEach(entry => {
+                const date = new Date(entry.date);
+                const monthYear = date.toLocaleDateString('en-US', { 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+                
+                if (!groupedEntries[monthYear]) {
+                    groupedEntries[monthYear] = [];
+                }
+                groupedEntries[monthYear].push(entry);
+            });
+
+            // Generate browse HTML
+            let browseHTML = '';
+            Object.keys(groupedEntries).forEach(monthYear => {
+                browseHTML += `<div class="month-group">`;
+                browseHTML += `<div class="month-header">${monthYear}</div>`;
+                
+                groupedEntries[monthYear].forEach(entry => {
+                    const date = new Date(entry.date);
+                    const dayDate = date.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short', 
+                        day: 'numeric'
+                    });
+                    
+                    // Get snippet of content or goals
+                    const snippet = (entry.content || entry.goals || '').substring(0, 50) + '...';
+                    
+                    browseHTML += `
+                        <div class="entry-preview" onclick="scrollToEntry(${entry.id})" style="border-left-color: ${entry.accentColor || '#6366f1'}">
+                            <div class="entry-preview-info">
+                                <div class="entry-preview-date">${dayDate}</div>
+                                <div class="entry-preview-mood">${entry.mood}</div>
+                                <div class="entry-preview-snippet">${snippet}</div>
+                            </div>
+                            <div class="color-dot" style="background-color: ${entry.accentColor || '#6366f1'}"></div>
+                        </div>
+                    `;
+                });
+                
+                browseHTML += `</div>`;
+            });
+
+            monthlyBrowse.innerHTML = browseHTML;
+        }
+
+        // Scroll to specific entry and highlight it
+        function scrollToEntry(entryId) {
+            // Find the entry element and scroll to it
+            const entryElements = document.querySelectorAll('.entry-item');
+            entryElements.forEach(element => {
+                const deleteBtn = element.querySelector('.delete-btn');
+                if (deleteBtn && deleteBtn.getAttribute('onclick').includes(entryId)) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Highlight the entry temporarily
+                    element.style.transform = 'translateX(10px)';
+                    element.style.background = '#fef3c7';
+                    setTimeout(() => {
+                        element.style.transform = '';
+                        element.style.background = '';
+                    }, 2000);
+                }
+            });
+        }
+        function updateCurrentDate() {
+            const today = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('en-US', options);
+        }
+
+        // Handle color change
+        function updateAccentColor(color) {
+            // Validate hex color
+            const hexPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            if (hexPattern.test(color)) {
+                document.documentElement.style.setProperty('--accent-color', color);
+                document.getElementById('colorPreview').style.backgroundColor = color;
+                return true;
+            }
+            return false;
+        }
+
+        // Color input handler
+        document.getElementById('colorInput').addEventListener('input', function(e) {
+            const color = e.target.value;
+            if (color.startsWith('#') && color.length >= 4) {
+                updateAccentColor(color);
+            }
+        });
+
+        // Handle mood selection
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedMood = btn.dataset.mood;
+            });
+        });
+
+        // Save journal entry
+        function saveEntry() {
+            const goalsText = document.getElementById('goalsEntry').value.trim();
+            const entryText = document.getElementById('journalEntry').value.trim();
+            const accentColor = document.getElementById('colorInput').value || '#6366f1';
+            
+            if (!goalsText && !entryText) {
+                alert('Please write something in either the goals section or reflection section!');
+                return;
+            }
+
+            if (!selectedMood) {
+                alert('Please select how you\'re feeling today!');
+                return;
+            }
+
+            // Validate and set color
+            if (!updateAccentColor(accentColor)) {
+                alert('Please enter a valid hex color (e.g., #6366f1)');
+                return;
+            }
+
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                mood: selectedMood,
+                goals: goalsText,
+                content: entryText,
+                accentColor: accentColor,
+                timestamp: Date.now()
+            };
+
+            entries.unshift(entry); // Add to beginning of array
+            localStorage.setItem('journalEntries', JSON.stringify(entries));
+
+            // Clear form
+            document.getElementById('goalsEntry').value = '';
+            document.getElementById('journalEntry').value = '';
+            document.getElementById('colorInput').value = '';
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+            selectedMood = '';
+            
+            // Reset color
+            updateAccentColor('#6366f1');
+
+            displayEntries();
+            
+            // Success feedback
+            const btn = document.querySelector('.save-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Saved!';
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        // Display all entries
+        function displayEntries() {
+            const entriesList = document.getElementById('entriesList');
+            
+            if (entries.length === 0) {
+                entriesList.innerHTML = '<div class="no-entries">No entries yet. Start journaling above!</div>';
+                return;
+            }
+
+            entriesList.innerHTML = entries.map(entry => {
+                const date = new Date(entry.date);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                return `
+                    <div class="entry-item" style="border-left-color: ${entry.accentColor || '#6366f1'}" data-entry-id="${entry.id}">
+                        <button class="delete-btn" onclick="deleteEntry(${entry.id}); event.stopPropagation();" type="button">Delete</button>
+                        <div class="entry-date" style="color: ${entry.accentColor || '#6366f1'}">${formattedDate}</div>
+                        <div class="entry-mood">${entry.mood}</div>
+                        ${entry.goals ? `
+                            <div class="entry-goals">
+                                <div class="entry-goals-label">Goals & Ideas</div>
+                                ${entry.goals.replace(/\n/g, '<br>')}
+                            </div>
+                        ` : ''}
+                        ${entry.content ? `
+                            <div class="entry-reflection">
+                                <div class="entry-reflection-label">Reflection</div>
+                                ${entry.content.replace(/\n/g, '<br>')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Delete an entry
+        function deleteEntry(id) {
+            if (confirm('Are you sure you want to delete this entry?')) {
+                entries = entries.filter(entry => entry.id !== id);
+                localStorage.setItem('journalEntries', JSON.stringify(entries));
+                displayEntries();
+            }
+        }
+
+        // Initialize app
+        updateCurrentDate();
+        displayEntries();
+        updateAccentColor('#6366f1');
+
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4geyBjb25zb2xlLmxvZygnU2VydmljZSB3b3JrZXIgaW5zdGFsbGVkJyk7IH0pOyBzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4geyBldmVudC5yZXNwb25kV2l0aChmZXRjaChldmVudC5yZXF1ZXN0KSk7IH0pOw==')
+                .catch(err => console.log('Service worker registration failed'));
+        }
+    </script>
+</body>
+</html>
